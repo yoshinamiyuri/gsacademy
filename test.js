@@ -26,140 +26,209 @@
 //     }
 // });
 
-//
-$(function() {
-	// 初期表示を非表示にする
-    $('#com_result_rock').hide();
-    $('#com_result_paper').hide();
-    $('#com_result_scissors').hide();
-    $('#user_result_rock').hide();
-    $('#user_result_paper').hide();
-    $('#user_result_scissors').hide();
+    // General variables
+    var choices = ['rock', 'paper', "scissors"];
+
+    var firebase = require('firebase');
     
-    //クリックされたら、選択した手を表示させる
-    $('#user_rock').on('click', function(){
-        $('#user_result_rock').show();
-        $('#com_result_rock').hide();
-        $('#com_result_paper').show();
-        $('#com_result_scissors').hide();
-        $('#user_result_paper').hide();
-        $('#user_result_scissors').hide();
-      })
+    var firebaseui = require('firebaseui');
 
-    //クリックされたら、選択した手を表示させる
-    $('#user_paper').on('click', function(){
-        $('#user_result_paper').show();
-        $('#com_result_rock').hide();
-        $('#com_result_paper').hide();
-        $('#com_result_scissors').show();
-        $('#user_result_rock').hide();
-        $('#user_result_scissors').hide();
-      })   
-
-    //クリックされたら、選択した手を表示させる
-    $('#user_scissors').on('click', function(){
-        $('#user_result_scissors').show();
-        $('#com_result_rock').show();
-        $('#com_result_paper').hide();
-        $('#com_result_scissors').hide();
-        $('#user_result_rock').hide();
-        $('#user_result_paper').hide();
-      })
-    }
-);
+$(document).ready(function(){
+    $("#user_paper").click(function(){
+        // Change src attribute of image
+        $("#user_result_rock").attr("src", "");
+        $("#user_result_scissors").attr("src", "");
+        $("#user_result_paper").attr("src", "paper.PNG");
+        var dataId = $(this).attr("data-id");
+        alert("The data-id of clicked item is: " + dataId);
+        computerDecision();
+    });    
+});
 
 
-var gameModule = (function () {
+$(document).ready(function(){
+    $("#user_scissors").click(function(){
+        // Change src attribute of image
+        $("#user_result_scissors").attr("src", "scissors.PNG");
+        $("#user_result_rock").attr("src", "");
+        $("#user_result_paper").attr("src", "");
+        var dataId = $(this).attr("data-id");
+        alert("The data-id of clicked item is: " + dataId);
+        computerDecision();
+    });    
+});
 
-    $(function() {
+$(document).ready(function(){
+    $("#user_rock").click(function(){
+        // Change src attribute of image
+        $("#user_result_paper").attr("src", "");
+        $("#user_result_scissors").attr("src", "");
+        $("#user_result_rock").attr("src", "rock.PNG");
+        var dataId = $(this).attr("data-id");
+        alert("The data-id of clicked item is: " + dataId);
+        computerDecision();
+    });    
+});
 
-        // General variables
-        var playerChoice,
-            computerChoice,
-            winner,
-            round = 1,
-            playerScore = 0,
-            computerScore = 0,
-            bestOf,
-            overallResultClass,
-            overallResultText,
-            choices = ['rock', 'paper', "scissors"];
+
+var wintimes = 0;
+var tiestimes = 0;
+var losttimes = 0;
+
+document.getElementById('win').innerHTML = wintimes;
+document.getElementById('lost').innerText = losttimes;
+document.getElementById('ties').textContent = tiestimes;
+
+var userrock = document.getElementById('user_result_rock'); 
+var userpaper = document.getElementById('user_result_paper');
+var userscissors = document.getElementById('user_result_scissors');
+
+//var gameModule = (function () {
+
+    //$(function() { //DOM要素が全部読み込まれたときに、実行するのが必要
 
         // Decides on whether the computer is playing rock, paper or scissors
         function computerDecision() {
             var randomChoice = Math.floor(Math.random() * choices.length);
-            return choices[randomChoice];
-
-            if (randomChoice == 'rock'){
-                $('#com_result_rock').show();
-                $('#com_result_paper').hide();
-                $('#com_result_scissors').hide();
+            console.log(randomChoice)
+                
+            if (choices[randomChoice] == 'rock'){
+                $("#com_result_paper").attr("src", "");
+                $("#com_result_scissors").attr("src", "");
+                $("#com_result_rock").attr("src", "rock.PNG");
             }
     
-            if (randomChoice == 'paper'){
-                $('#com_result_paper').show();
-                $('#com_result_rock').hide();
-                $('#com_result_scissors').hide();
-                alert(2222);
+            if (choices[randomChoice] == 'paper'){
+                $("#com_result_paper").attr("src", "paper.PNG");
+                $("#com_result_scissors").attr("src", "");
+                $("#com_result_rock").attr("src", "");
+                // if (userrock.src = "rock.PNG") {
+                //     losttimes++;
+                // }
+                // if (userscissors.src = "scissors.PNG") {
+                //     wintimes++;
+                // }
+                // if (userpaper.src = "paper.PNG") {
+                //     tiestimes++;
+                // }  
+                
             }
     
-            if (randomChoice == 'scissors'){
-                $('#com_result_scissors').show();
-                $('#com_result_paper').hide();
-                $('#com_result_rock').hide();
-                alert(3333);
-    
+            if (choices[randomChoice] == 'scissors'){
+                $("#com_result_paper").attr("src", "");
+                $("#com_result_scissors").attr("src", "scissors.PNG");
+                $("#com_result_rock").attr("src", "");
+                // if (userrock.src = "rock.PNG") {
+                //     wintimes++;
+                // }
+                // if (userscissors.src = "scissors.PNG") {
+                //     tiestimes++;
+                // }
+                // if (userpaper.src = "paper.PNG") {
+                //     losttimes++;
+                // }    
+                    
             }
+            return choices[randomChoice]; 
+            //return以降は実施されないので、一番最後に記載する
         }
 
-        // Plays the game
-        function playGame(playerChoice) {
 
-            computerChoice = computerDecision();
-            round++;
+        //勝敗・引き分けの計算をして、表示させたい
 
-            // Set Choices
-            $('.player-choice-icon').attr('class', 'player-choice-icon ' + playerChoice);
-            $('.computer-choice-icon').attr('class', 'computer-choice-icon ' + computerChoice);
-
-            winner = decideWinner(playerChoice, computerChoice);
-
-            // Set the values on the screen
-            setValues(playerChoice, computerChoice, winner);
-
-        }
-
-        // Sets all the values on the board
-        function setValues(playerChoice, computerChoice, winnerText) {
-
-            $('.player-choice').text(playerChoice); // If the player has chosen rock, paper or scissors
-            $('.computer-choice').text(computerChoice); // If the computer has chosen rock, paper or scissors
-            $('.winner').text(winnerText); // Who won the round
-        }
-        
-        
-         // Play the game
-        $('.weapon li').on('click', function(e) {
-
-            e.preventDefault();
-            playerChoice = $(this).data('weapon');
-
-            $('body').addClass('weapon-chosen');
-
-            playGame(playerChoice);
-
-            if (round > bestOf) {
-
-                endGame();
-
-            }
-
+        $(document).ready(function(){
+            $(".user input img").on("click", function(){
+                var dataId = $(this).attr("data-id");
+                alert("The data-id of clicked item is: " + dataId);
+            });
         });
 
 
-    })
+        // function calculation(){
+        //     $(".user input img").on("click", function(){
+        //         var dataId = $(this).attr("data-id");
+        //         }
 
 
-})
+
+
+        //     });
+        // }
+
+    
+        
+// if (dataId = 1 && userrock.src = "rock.PNG") {
+
+//     tiestimes++;
+//     console.log(tiestimes)
+//     }
+
+
+// if () {
+
+// }
+// if (userscissors.src = "scissors.PNG") {
+// losttimes++;
+// console.log(losttimes)
+// }
+// if (userpaper.src = "paper.PNG") {
+// wintimes++;
+// console.log(wintimes)
+// }  
+
+
+
+
+
+
+        // // Plays the game
+        // function playGame(playerChoice) {
+
+        //     computerChoice = computerDecision();
+        //     round++;
+
+        //     // Set Choices
+        //     $('.player-choice-icon').attr('class', 'player-choice-icon ' + playerChoice);
+        //     $('.computer-choice-icon').attr('class', 'computer-choice-icon ' + computerChoice);
+
+        //     winner = decideWinner(playerChoice, computerChoice);
+
+        //     // Set the values on the screen
+        //     setValues(playerChoice, computerChoice, winner);
+
+        // }
+
+        // // Sets all the values on the board
+        // function setValues(playerChoice, computerChoice, winnerText) {
+
+        //     $('.player-choice').text(playerChoice); // If the player has chosen rock, paper or scissors
+        //     $('.computer-choice').text(computerChoice); // If the computer has chosen rock, paper or scissors
+        //     $('.winner').text(winnerText); // Who won the round
+        // }
+        
+        
+        //  // Play the game
+        // $('.weapon li').on('click', function(e) {
+
+        //     e.preventDefault();
+        //     playerChoice = $(this).data('weapon');
+
+        //     $('body').addClass('weapon-chosen');
+
+        //     playGame(playerChoice);
+
+        //     if (round > bestOf) {
+
+        //         endGame();
+
+        //     }
+
+        // });
+
+
+    //})
+
+
+//})
 
 

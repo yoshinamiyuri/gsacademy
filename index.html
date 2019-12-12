@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+    <!-- フロントエンドのみで、Javascriptで書き直せばいけるはず -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +9,10 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="index.css">
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+    <script src="bower_components/firebaseui/dist/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="bower_components/firebaseui/dist/firebaseui.css" />
 
 </head>
 <body>
@@ -25,8 +30,8 @@
           </div>
           <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#">WHO</a></li>
-              <li><a href="#">WHAT</a></li>
+              <li><a href="#">Your score</a></li>
+              <li><a href="#">How it </a></li>
               <li><a href="#">WHERE</a></li>
             </ul>
           </div>
@@ -53,22 +58,15 @@
         </a>
     </div>
 
-
     <!-- Third Container -->
     <div class="container-fluid bg-3 text-center">
         <h3 class="margin">Let's get started</h3>
-        <p> 30回先に勝ったら、あなたの勝ちです</p>
+        <p> If you win 30 times you are the winner!</p>
         <div class="results" width="600" height="30">
           <ui class="rock-paper-scissors__meta--2aIGW">
-            <font color="#0000ff">WIN:</font>
-            <font color="#ff0000">LOST:1回</font>
-            <font color="#00cc00">TIES:1回</font>
-            <script>
-                var list = [“Taro”, “Jiro”, “Haruka”];
-                for (var i = 0; i < list.length; i++) {
-                document.write (list[i]);
-                }
-            </script>
+            <font color="#0000ff">WIN:<div id="win">x</div></font>
+            <font color="#ff0000">LOSE:<div id="lost">y</div></font>
+            <font color="#00cc00">TIES:<div id="ties">z</div></font>
         </div>
         <div class="machine buttons" width="30" height="30">
           <img src="paper.PNG" class="machine_paper" value="paper">
@@ -76,53 +74,34 @@
           <img src="rock.PNG" class="machine_rock" value="rock">
         </div>
 
-        <div id="hands">
-          <div id="win" style="opacity: 1; transform: translateY(128px);">
-            <img src="win.png">
-          </div>
-        </div>
-        <div id="final_result">
-        </div>
-
         <!-- PLAY ARENA -->
         <div class="arena">
-
             <div class="computer-chip">
                 <h3>Computer choice</h3>
-                <span class="computer-choice">
-                  <!-- 何かで必要？ -->
-                </span>
                 <div class="computer-choice-icon">
-                  <img src="rock.PNG" id="com_result_rock" value="rock" onclick="R1">
-                  <img src="scissors.PNG" id="com_result_scissors" value="scissors" onclick="R2">
-                  <img src="paper.PNG" id="com_result_paper" value="paper" onclick="R3">
+                  <img src="" id="com_result_rock" value="rock" onclick="R1">
+                  <img src="" id="com_result_scissors" value="scissors" onclick="R2">
+                  <img src="" id="com_result_paper" value="paper" onclick="R3">
                 </div> 
             </div>
 
             <div class="player-chip">
-                <span class="player-choice">
-                  <!-- 何かで必要？ -->
-                </span>
-                <div class="player-choice-icon">
-                    <img src="rock.PNG" id="user_result_rock" value="rock" onclick="R1" style="transform: rotate(180deg);">
-                    <img src="scissors.PNG" id="user_result_scissors" value="scissors" onclick="R2" style="transform: rotate(180deg);">
-                    <img src="paper.PNG" id="user_result_paper" value="paper" onclick="R3" style="transform: rotate(180deg);">
+                <div class="player-choice-icon">  
+                    <img src="" id="user_result_rock" value="rock" onclick="R1" style="transform: rotate(180deg);">
+                    <img src="" id="user_result_scissors" value="scissors" onclick="R2" style="transform: rotate(180deg);">
+                    <img src="" id="user_result_paper" value="paper" onclick="R3" style="transform: rotate(180deg);">
                     <h3>Your choice</h3>
                 </div>
                 <br>
             </div>
 
-
         <div class="user input" width="30" height="30">
-          <img src="rock.PNG" id="user_rock" value="rock" style="transform: rotate(180deg);">
-          <img src="scissors.PNG" id="user_scissors" value="scissors"  style="transform: rotate(180deg);">
-          <img src="paper.PNG" id="user_paper" value="paper" style="transform: rotate(180deg);">
+          <img src="rock.PNG" id="user_rock" data-id="1" value="rock" style="transform: rotate(180deg);">
+          <img src="scissors.PNG" id="user_scissors" data-id="2" value="scissors"  style="transform: rotate(180deg);">
+          <img src="paper.PNG" id="user_paper" data-id="3" value="paper" style="transform: rotate(180deg);">
         </div> 
 
 
-
-
-    
 
 <!-- jQuery library -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
